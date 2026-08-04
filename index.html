@@ -1445,24 +1445,57 @@
         }
 
         function buildTeams(players) {
-            players.sort((a, b) => b.score - a.score);
-
+            // Important : on NE trie PAS par score ici. Les joueurs arrivent déjà dans
+            // l'ordre d'inscription (l'ordre des lignes du Google Sheet = ordre chronologique).
+            // En gardant cet ordre, l'ajout d'un nouveau joueur n'affecte que lui-même
+            // (et éventuellement qui passe sur le banc) : les équipes déjà formées ne
+            // sont plus jamais mélangées entre elles.
             let teamA = [];
             let teamB = [];
             let subs = [];
             let scoreA = 0;
             let scoreB = 0;
+            const postesA = { GK: 0, DEF: 0, ATT: 0 };
+            const postesB = { GK: 0, DEF: 0, ATT: 0 };
 
             players.forEach((player, index) => {
-                if (index < 10) {
-                    if (teamA.length < 5 && teamB.length < 5) {
-                        if (scoreA <= scoreB) { teamA.push(player); scoreA += player.score; }
-                        else { teamB.push(player); scoreB += player.score; }
-                    }
-                    else if (teamA.length < 5) { teamA.push(player); }
-                    else { teamB.push(player); }
-                } else {
+                if (index >= 10) {
                     subs.push(player);
+                    return;
+                }
+
+                const aFull = teamA.length >= 5;
+                const bFull = teamB.length >= 5;
+
+                let target;
+                if (aFull && !bFull) {
+                    target = 'B';
+                } else if (bFull && !aFull) {
+                    target = 'A';
+                } else {
+                    // Priorité n°1 : équilibrer les POSTES entre les deux équipes
+                    // (évite de se retrouver avec 3 défenseurs d'un côté et 3 attaquants de l'autre).
+                    const countA = postesA[player.poste] || 0;
+                    const countB = postesB[player.poste] || 0;
+                    if (countA !== countB) {
+                        target = countA < countB ? 'A' : 'B';
+                    } else if (scoreA !== scoreB) {
+                        // Priorité n°2, à égalité de postes : équilibrer le niveau (score total)
+                        target = scoreA <= scoreB ? 'A' : 'B';
+                    } else {
+                        // Parfaite égalité : on alterne simplement selon l'effectif actuel
+                        target = teamA.length <= teamB.length ? 'A' : 'B';
+                    }
+                }
+
+                if (target === 'A') {
+                    teamA.push(player);
+                    scoreA += player.score;
+                    postesA[player.poste] = (postesA[player.poste] || 0) + 1;
+                } else {
+                    teamB.push(player);
+                    scoreB += player.score;
+                    postesB[player.poste] = (postesB[player.poste] || 0) + 1;
                 }
             });
 

@@ -1269,7 +1269,7 @@
                 setTimeout(() => {
                     document.getElementById('step-3').innerHTML = '<h2 style="color:var(--primary)">Joueur Enregistré ! ✅</h2><p style="text-align:center">Rendez-vous sur le terrain ci-dessous.</p>';
                     loadPlayers();
-                }, 1000);
+                }, 1500);
 
             } catch (error) {
                 alert("Erreur réseau.");
@@ -1277,9 +1277,12 @@
         }
 
         // --- Affichage de l'équipe ---
-        async function loadPlayers() {
+        // retryCount : nombre de tentatives déjà effectuées (usage interne, ne pas fournir à l'appel)
+        async function loadPlayers(retryCount = 0) {
             const loadingOverlay = document.getElementById('loading-overlay');
             const emptyMsg = document.getElementById('empty-msg');
+            const MAX_RETRIES = 3; // 1 essai initial + 3 tentatives = 4 essais au total
+            const RETRY_DELAY_MS = 1200;
 
             loadingOverlay.style.display = 'flex';
             emptyMsg.style.display = 'none';
@@ -1287,12 +1290,18 @@
             try {
                 let players = [];
                 let response = await fetch(GOOGLE_SCRIPT_URL);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 players = await response.json();
+                if (!Array.isArray(players)) throw new Error('Réponse inattendue du script');
 
                 players.forEach(p => {
                     p.avatar = getAvatarPath(p.prenom);
                     p.poste = normalizePoste(p.poste);
                 });
+
+                // 🔍 Debug temporaire : ouvre la console du navigateur (F12) pour voir
+                // les données brutes reçues du Google Sheet, joueur par joueur.
+                console.log('Joueurs reçus depuis le Google Sheet :', players);
 
                 loadingOverlay.style.display = 'none';
 
@@ -1304,6 +1313,14 @@
                 }
 
             } catch (error) {
+                // Le Google Sheet répond parfois trop lentement (surtout juste après une
+                // inscription) ou renvoie une erreur ponctuelle : on réessaie discrètement
+                // avant d'afficher un message d'erreur à la personne.
+                if (retryCount < MAX_RETRIES) {
+                    console.warn(`Échec du chargement (tentative ${retryCount + 1}/${MAX_RETRIES + 1}), nouvel essai dans ${RETRY_DELAY_MS}ms...`, error);
+                    setTimeout(() => loadPlayers(retryCount + 1), RETRY_DELAY_MS);
+                    return;
+                }
                 loadingOverlay.style.display = 'none';
                 emptyMsg.style.display = 'block';
                 emptyMsg.innerText = "Impossible de récupérer les joueurs depuis le Google Sheet. Vérifiez l'URL du script.";

@@ -1175,6 +1175,17 @@
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const isTouchDevice = window.matchMedia('(hover: none), (pointer: coarse)').matches;
 
+        // Prénom -> nom de fichier image à la racine du site (ex: "Adavan" -> "adavan.jpg")
+        // Si le fichier n'existe pas, l'attribut onerror des <img> bascule sur avatar.jpg
+        function getAvatarPath(prenom) {
+            const slug = (prenom || '')
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // enlève les accents
+                .trim()
+                .toLowerCase()
+                .replace(/\s+/g, '');
+            return slug ? `${slug}.jpg` : 'avatar.jpg';
+        }
+
         // --- Navigation Formulaire ---
         function selectPoste(element, poste) {
             document.querySelectorAll('#poste-selection .date-card').forEach(el => el.classList.remove('selected'));
@@ -1262,18 +1273,8 @@
                 let response = await fetch(GOOGLE_SCRIPT_URL);
                 players = await response.json();
 
-                const mesPhotos = {
-                    "Zidane": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop",
-                    "Alex": "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&h=150&fit=crop",
-                    "Thomas": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop"
-                };
-
                 players.forEach(p => {
-                    if (mesPhotos[p.prenom]) {
-                        p.avatar = mesPhotos[p.prenom];
-                    } else if(!p.avatar) {
-                        p.avatar = `https://i.pravatar.cc/150?u=${p.prenom}`;
-                    }
+                    p.avatar = getAvatarPath(p.prenom);
                 });
 
                 loadingOverlay.style.display = 'none';
@@ -1379,7 +1380,7 @@
                     card.innerHTML = `
                         <div class="poste-badge">${player.poste || 'ATT'}</div>
                         <div class="avatar-container">
-                            <img src="${player.avatar}" alt="Player">
+                            <img src="${player.avatar}" alt="Player" onerror="this.onerror=null;this.src='avatar.jpg';">
                         </div>
                         <div class="player-name">${player.prenom}</div>
                     `;
@@ -1407,7 +1408,7 @@
                     <div class="player-card" style="animation-delay:${i * 60}ms">
                         <div class="poste-badge" style="font-size: 0.6rem; padding: 2px 5px;">${player.poste || 'ATT'}</div>
                         <div class="avatar-container">
-                            <img src="${player.avatar}" alt="Sub">
+                            <img src="${player.avatar}" alt="Sub" onerror="this.onerror=null;this.src='avatar.jpg';">
                         </div>
                         <div class="player-name">${player.prenom}</div>
                     </div>

@@ -115,15 +115,30 @@
         .nav-logo-icon {
             position: absolute;
             left: 0;
-            top: 0;
-            height: 160px;
+            bottom: 0;
+            transform: translateY(50%);
+            height: 100px;
             width: auto;
             display: block;
             filter: drop-shadow(0 10px 18px rgba(0,0,0,0.6));
             transition: height 0.35s var(--ease-out);
         }
         .navbar.scrolled .nav-logo-icon {
-            height: 110px;
+            height: 72px;
+        }
+        /* Desktop : le logo est plus grand que la barre de nav elle-même, donc on l'ancre
+           en haut de page plutôt que de le centrer sur la ligne, pour éviter qu'il ne
+           dépasse par le haut de l'écran (aucun souci sur mobile où le logo reste plus petit). */
+        @media (min-width: 769px) {
+            .nav-logo-icon {
+                bottom: auto;
+                top: 0;
+                transform: none;
+                height: 160px;
+            }
+            .navbar.scrolled .nav-logo-icon {
+                height: 110px;
+            }
         }
         .navbar .logo {
             font-family: 'Space Grotesk', sans-serif;
@@ -2563,7 +2578,7 @@
             { prenom: 'Yoann', joue: 6, victoires: 3 },
             { prenom: 'Tristan', joue: 4, victoires: 2 },
             { prenom: 'Alex', joue: 6, victoires: 4 },
-            { prenom: 'Christophe', joue: 5, victoires: 2 },
+            { prenom: 'Christophe LG', joue: 5, victoires: 2 },
             { prenom: 'Gaelle', joue: 4, victoires: 2 },
             { prenom: 'Léo', joue: 3, victoires: 1 },
             { prenom: 'Latifa', joue: 4, victoires: 1 },
@@ -2578,12 +2593,12 @@
         ];
 
         const MATCH_HISTORY = [
-            { id: 1, team1: ['Alex', 'Christophe', 'Jean Edouard', 'Léo', 'Yoann'], team2: ['Adavan', 'Florian', 'Sébastien', 'Tristan'], score1: null, score2: null },
-            { id: 2, team1: ['Alex', 'Christophe', 'Gaelle', 'Léo', 'Sébastien', 'Tristan'], team2: ['Latifa', 'Jean Edouard', 'Florian', 'Fred', 'Yoann', 'Adavan'], score1: 14, score2: 10 },
-            { id: 3, team1: ['Alex', 'Latifa', 'Sébastien', 'Adavan', 'Yoann'], team2: ['Christophe', 'Florian', 'Gaelle', 'Tristan', 'Jean Edouard'], score1: 13, score2: 12 },
-            { id: 4, team1: ['Jean Edouard', 'Alex', 'Florian', 'Gaelle', 'Maximilien'], team2: ['Christophe', 'Sébastien', 'Adavan', 'Yoann', 'Tristan'], score1: 10, score2: 6 },
+            { id: 1, team1: ['Alex', 'Christophe LG', 'Jean Edouard', 'Léo', 'Yoann'], team2: ['Adavan', 'Florian', 'Sébastien', 'Tristan'], score1: null, score2: null },
+            { id: 2, team1: ['Alex', 'Christophe LG', 'Gaelle', 'Léo', 'Sébastien', 'Tristan'], team2: ['Latifa', 'Jean Edouard', 'Florian', 'Fred', 'Yoann', 'Adavan'], score1: 14, score2: 10 },
+            { id: 3, team1: ['Alex', 'Latifa', 'Sébastien', 'Adavan', 'Yoann'], team2: ['Christophe LG', 'Florian', 'Gaelle', 'Tristan', 'Jean Edouard'], score1: 13, score2: 12 },
+            { id: 4, team1: ['Jean Edouard', 'Alex', 'Florian', 'Gaelle', 'Maximilien'], team2: ['Christophe LG', 'Sébastien', 'Adavan', 'Yoann', 'Tristan'], score1: 10, score2: 6 },
             { id: 5, team1: ['Latifa', 'Daniel', 'Alex', 'Gaelle', 'Ahmed', 'Fred'], team2: ['Florian', 'Sébastien', 'Adavan', 'Léo', 'Leila', 'Yoann'], score1: 8, score2: 14 },
-            { id: 6, team1: ['Christophe', 'Alex', 'Yoann', 'Maximilien', 'Adavan'], team2: ['Florian', 'Jean Edouard', 'Latifa', 'Léandre'], score1: 24, score2: 23 }
+            { id: 6, team1: ['Christophe LG', 'Alex', 'Yoann', 'Maximilien', 'Adavan'], team2: ['Florian', 'Jean Edouard', 'Latifa', 'Léandre'], score1: 24, score2: 23 }
             // 👉 Ajoute ton nouveau match ici, juste avant le crochet fermant.
         ];
 

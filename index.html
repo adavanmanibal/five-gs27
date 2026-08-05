@@ -1584,7 +1584,7 @@
                     <div class="date-card" data-date="Jeudi 3 Sept" onclick="toggleDate(this)">Jeudi 3 Sept</div>
                     <div class="date-card" data-date="Jeudi 17 Sept" onclick="toggleDate(this)">Jeudi 17 Sept</div>
                     <div class="date-card" data-date="Jeudi 24 Sept" onclick="toggleDate(this)">Jeudi 24 Sept</div>
-                    <div class="date-card" data-date="Jeudi 01 Oct" onclick="toggleDate(this)">Jeudi 01 Oct</div>
+                    <div class="date-card" data-date="Jeudi 1er Oct" onclick="toggleDate(this)">Jeudi 1er Oct</div>
                 </div>
                 <div style="display:flex; gap:10px;">
                     <button style="background: #444; color:#fff;" onclick="prevStep(1)">Retour</button>
@@ -2083,18 +2083,14 @@
                     clearPitch();
                 } else {
                     const poll = renderDatePoll(players);
+                    emptyMsg.style.display = 'none';
 
-                    if (poll.confirmed) {
-                        emptyMsg.style.display = 'none';
-                        const eligible = players.filter(p =>
-                            (p.date || '').split('&').map(d => d.trim()).includes(poll.winningDate)
-                        );
-                        buildTeams(eligible);
-                    } else {
-                        emptyMsg.style.display = 'block';
-                        emptyMsg.innerText = `Le five n'est pas encore confirmé cette semaine — il faut au moins ${MIN_PLAYERS_FOR_FIVE} joueurs disponibles à la même date. Reviens un peu plus tard, ou motive tes collègues à s'inscrire ! 👀`;
-                        clearPitch();
-                    }
+                    // On affiche toujours la compo avec les inscrits pour la date la mieux placée
+                    // (le sondage au-dessus indique juste si le seuil des 8 est atteint ou non).
+                    const eligible = poll.winningDate
+                        ? players.filter(p => (p.date || '').split('&').map(d => d.trim()).includes(poll.winningDate))
+                        : players;
+                    buildTeams(eligible);
                 }
 
             } catch (error) {

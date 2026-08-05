@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La ligue des Shampoings céramiques</title>
+    <title>La ligue des Shampoing céramique</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -95,7 +95,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 22px 40px;
+            padding: 16px 40px;
             z-index: 1000;
             border-bottom: 1px solid rgba(255,255,255,0.08);
             transition: padding 0.35s var(--ease-out), background 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out);
@@ -112,15 +112,14 @@
             gap: 10px;
         }
         .nav-logo-icon {
-            height: 150px;
+            height: 92px;
             width: auto;
             display: block;
+            transition: height 0.35s var(--ease-out);
         }
-        
         .navbar.scrolled .nav-logo-icon {
-            height: 46px;
+            height: 60px;
         }
-        
         .navbar .logo {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
@@ -1499,6 +1498,8 @@
             .navbar { padding: 16px 20px; }
             .navbar.scrolled { padding: 10px 20px; }
             .navbar ul { gap: 16px; }
+            .nav-logo-icon { height: 58px; }
+            .navbar.scrolled .nav-logo-icon { height: 42px; }
             #cursor-glow { display: none; }
         }
 
@@ -1519,8 +1520,7 @@
 
     <nav class="navbar" id="navbar">
         <div class="logo-group">
-            <img src="logo-five-gs27.svg" alt="Logo GS27 Five" class="nav-logo-icon" onerror="this.style.display='none';">
-            <div class="logo">GS27 FC</div>
+            <img src="logo-five-gs27.svg" alt="Logo GS27 FC" class="nav-logo-icon" onerror="this.style.display='none';">
         </div>
         <ul>
             <li><a href="#inscription" data-section="inscription">S'inscrire</a></li>
@@ -1535,8 +1535,8 @@
         <div class="glow-orb b"></div>
         <div class="hero-content">
             <span class="hero-eyebrow">Session du jeudi</span>
-            <h1>La ligue des Shampoings céramiques</h1>
-            <p>Remplis tes stats, gagne ta place sur le terrain</p>
+            <h1>La ligue des Shampoing céramique</h1>
+            <p>Remplis tes stats, gagne ta place sur le terrain.</p>
         </div>
         <div class="scroll-cue" onclick="document.getElementById('inscription').scrollIntoView({behavior:'smooth'})">
             <span>Découvrir</span>

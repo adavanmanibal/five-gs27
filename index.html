@@ -106,6 +106,16 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             border-bottom-color: rgba(0, 255, 136, 0.15);
         }
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-logo-icon {
+            height: 40px;
+            width: auto;
+            display: block;
+        }
         .navbar .logo {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
@@ -323,6 +333,58 @@
             font-size: 2.3rem;
             margin-bottom: 20px;
             text-align: center;
+        }
+
+        /* --- Indicateur d'étapes du formulaire --- */
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+        .step-dot {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            background: rgba(255,255,255,0.06);
+            border: 2px solid rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.4);
+            transition: all 0.35s var(--ease-out);
+            flex-shrink: 0;
+        }
+        .step-dot.active {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(0,255,136,0.12);
+            box-shadow: 0 0 14px rgba(0,255,136,0.4);
+            transform: scale(1.1);
+        }
+        .step-dot.done {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: #000;
+        }
+        .step-line {
+            width: 40px;
+            height: 2px;
+            background: rgba(255,255,255,0.15);
+            transition: background 0.35s var(--ease-out);
+        }
+        .step-line.done { background: var(--primary); }
+        .step-labels {
+            text-align: center;
+            margin-top: -18px;
+            margin-bottom: 24px;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
         /* --- Écran de transmission (attente pendant l'envoi) --- */
@@ -569,63 +631,59 @@
             box-shadow: none;
         }
 
-        /* --- Loader Style TV --- */
+        /* --- Skeleton loader façon "compo qui charge" --- */
         #loading-overlay {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 30px;
-            background: rgba(0,0,0,0.6);
-            border-radius: 10px;
-            border: 1px solid rgba(0, 255, 136, 0.3);
+            padding: 30px 20px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 14px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
             margin-bottom: 20px;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
         }
-        .loader-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top: 4px solid var(--primary);
+        .skeleton-pitch {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+            width: 100%;
+        }
+        .skeleton-row {
+            display: flex;
+            gap: 15vw;
+            justify-content: center;
+        }
+        .skeleton-avatar {
+            width: 54px;
+            height: 54px;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 15px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.16) 50%, rgba(255,255,255,0.05) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s ease-in-out infinite;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
-        #loading-overlay p {
-            font-size: 1.2rem;
+        .skeleton-divider {
+            width: 60%;
+            height: 2px;
+            background: rgba(255,255,255,0.1);
+            margin: 2px 0;
+        }
+        .skeleton-caption {
+            margin-top: 18px;
+            font-size: 1.1rem;
             font-weight: 600;
             color: var(--primary);
             letter-spacing: 1px;
-            margin-bottom: 15px;
             animation: pulseText 1.5s infinite;
         }
         @keyframes pulseText {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
-        }
-        .loader-bar {
-            width: 200px;
-            height: 6px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-        }
-        .loader-progress {
-            width: 30%;
-            height: 100%;
-            background: var(--primary);
-            border-radius: 10px;
-            animation: loadingBar 1.5s ease-in-out infinite alternate;
-            box-shadow: 0 0 10px var(--primary);
-        }
-        @keyframes loadingBar {
-            0% { width: 10%; transform: translateX(0); }
-            100% { width: 40%; transform: translateX(150px); }
         }
 
         .pitch-layout {
@@ -866,6 +924,7 @@
             justify-content: center;
             gap: 20%;
             width: 100%;
+            perspective: 1000px;
         }
 
         /* --- Cartes Joueurs --- */
@@ -880,11 +939,12 @@
             transform-style: preserve-3d;
             perspective: 600px;
             opacity: 0;
-            animation: cardPop 0.5s var(--ease-spring) forwards;
+            animation: cardFlipIn 0.65s var(--ease-out) forwards;
         }
-        @keyframes cardPop {
-            from { opacity: 0; transform: translateY(20px) scale(0.8); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+        @keyframes cardFlipIn {
+            0% { opacity: 0; transform: rotateY(-100deg) scale(0.7); }
+            55% { opacity: 1; }
+            100% { opacity: 1; transform: rotateY(0deg) scale(1); }
         }
 
         .poste-badge {
@@ -1001,6 +1061,7 @@
             justify-content: center;
             gap: 25px;
             align-items: center;
+            perspective: 1000px;
         }
 
         .sub-card-wrapper .player-card {
@@ -1053,6 +1114,186 @@
             stroke: var(--primary);
         }
 
+        /* --- Section Historique / Classement --- */
+        .section-historique {
+            max-width: 1300px;
+            margin: 0 auto 100px;
+            padding: 0 20px;
+        }
+        .historique-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .historique-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.8rem;
+            text-transform: uppercase;
+        }
+        .historique-note {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.9rem;
+        }
+        .historique-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+        @media (min-width: 980px) {
+            .historique-grid { grid-template-columns: 1.1fr 1.4fr; align-items: start; }
+        }
+
+        /* Classement */
+        .leaderboard {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 26px;
+        }
+        .leaderboard h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+        .leaderboard-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .leaderboard-row:last-child { border-bottom: none; }
+        .lb-rank {
+            width: 26px;
+            text-align: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            color: rgba(255,255,255,0.4);
+            flex-shrink: 0;
+        }
+        .leaderboard-row:nth-child(1) .lb-rank { color: #ffd700; }
+        .leaderboard-row:nth-child(2) .lb-rank { color: #c6c6c6; }
+        .leaderboard-row:nth-child(3) .lb-rank { color: #cd7f32; }
+        .lb-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255,255,255,0.15);
+            flex-shrink: 0;
+        }
+        .lb-info { flex: 1; min-width: 0; }
+        .lb-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .lb-meta {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.4);
+        }
+        .lb-bar-track {
+            width: 100%;
+            height: 5px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .lb-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--team-a));
+        }
+        .lb-ratio {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--primary);
+            width: 55px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        /* Matchs */
+        .matches-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .match-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 16px 20px;
+        }
+        .match-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .match-tag {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.45);
+        }
+        .match-score {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+        .match-teams {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 14px;
+            align-items: start;
+        }
+        .match-team-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .match-team-list.right { justify-content: flex-end; }
+        .match-player-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 3px 10px 3px 3px;
+            font-size: 0.85rem;
+        }
+        .match-player-chip img {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .match-team-list.team-win .match-player-chip {
+            border-color: rgba(0, 255, 136, 0.4);
+            background: rgba(0, 255, 136, 0.08);
+        }
+        .match-vs {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            color: rgba(255,255,255,0.3);
+            padding-top: 4px;
+        }
+
         footer {
             text-align: center;
             padding: 40px 20px 60px;
@@ -1084,10 +1325,14 @@
     <div id="cursor-glow"></div>
 
     <nav class="navbar" id="navbar">
-        <div class="logo">FiveManager</div>
+        <div class="logo-group">
+            <img src="logo-five-gs27.svg" alt="Logo GS27 Five" class="nav-logo-icon" onerror="this.style.display='none';">
+            <div class="logo">FiveManager</div>
+        </div>
         <ul>
             <li><a href="#inscription" data-section="inscription">S'inscrire</a></li>
             <li><a href="#compo" data-section="compo">La Compo</a></li>
+            <li><a href="#historique" data-section="historique">Historique</a></li>
         </ul>
     </nav>
 
@@ -1108,6 +1353,15 @@
 
     <main>
         <section id="inscription" class="section-form reveal">
+            <div class="step-indicator" id="step-indicator">
+                <div class="step-dot active" data-step="1">1</div>
+                <div class="step-line" data-line="1"></div>
+                <div class="step-dot" data-step="2">2</div>
+                <div class="step-line" data-line="2"></div>
+                <div class="step-dot" data-step="3">3</div>
+            </div>
+            <div class="step-labels" id="step-label">Étape 1/3 — Identité & poste</div>
+
             <!-- Etape 1 -->
             <div id="step-1" class="form-step active">
                 <h2>Identité & Poste</h2>
@@ -1202,9 +1456,16 @@
             </div>
 
             <div id="loading-overlay" style="display: none;">
-                <div class="loader-spinner"></div>
-                <p>Connexion à la VAR... Analyse des stats ⚽</p>
-                <div class="loader-bar"><div class="loader-progress"></div></div>
+                <div class="skeleton-pitch">
+                    <div class="skeleton-row"><span class="skeleton-avatar"></span></div>
+                    <div class="skeleton-row"><span class="skeleton-avatar"></span><span class="skeleton-avatar"></span></div>
+                    <div class="skeleton-row"><span class="skeleton-avatar"></span><span class="skeleton-avatar"></span></div>
+                    <div class="skeleton-divider"></div>
+                    <div class="skeleton-row"><span class="skeleton-avatar"></span><span class="skeleton-avatar"></span></div>
+                    <div class="skeleton-row"><span class="skeleton-avatar"></span><span class="skeleton-avatar"></span></div>
+                    <div class="skeleton-row"><span class="skeleton-avatar"></span></div>
+                </div>
+                <p class="skeleton-caption">Connexion à la VAR... Analyse des stats ⚽</p>
             </div>
 
             <p id="empty-msg" style="display:none; text-align:center; margin-bottom: 20px; color: var(--primary);">Le terrain est vide. Soyez les premiers à vous inscrire !</p>
@@ -1253,6 +1514,20 @@
                     <h3>Le Banc</h3>
                     <div id="subs-list"></div>
                 </div>
+            </div>
+        </section>
+
+        <section id="historique" class="section-historique reveal">
+            <div class="historique-header">
+                <h2>Historique</h2>
+                <span class="historique-note">Classement basé sur les matchs déjà joués</span>
+            </div>
+            <div class="historique-grid">
+                <div class="leaderboard">
+                    <h3>🏆 Classement des joueurs</h3>
+                    <div id="leaderboard-list"></div>
+                </div>
+                <div class="matches-list" id="matches-list"></div>
             </div>
         </section>
 
@@ -1313,6 +1588,27 @@
             formData.poste = poste;
         }
 
+        const STEP_LABELS = {
+            1: 'Étape 1/3 — Identité & poste',
+            2: 'Étape 2/3 — Disponibilité',
+            3: 'Étape 3/3 — Auto-évaluation'
+        };
+
+        function updateStepIndicator(step) {
+            document.querySelectorAll('.step-dot').forEach(dot => {
+                const dotStep = Number(dot.dataset.step);
+                dot.classList.remove('active', 'done');
+                if (dotStep < step) dot.classList.add('done');
+                else if (dotStep === step) dot.classList.add('active');
+            });
+            document.querySelectorAll('.step-line').forEach(line => {
+                const lineStep = Number(line.dataset.line);
+                line.classList.toggle('done', lineStep < step);
+            });
+            const label = document.getElementById('step-label');
+            if (label) label.textContent = STEP_LABELS[step] || '';
+        }
+
         function nextStep(step) {
             if (step === 2) {
                 formData.prenom = document.getElementById('prenom').value.trim();
@@ -1324,11 +1620,13 @@
             }
             document.querySelectorAll('.form-step').forEach(el => el.classList.remove('active'));
             document.getElementById(`step-${step}`).classList.add('active');
+            updateStepIndicator(step);
         }
 
         function prevStep(step) {
             document.querySelectorAll('.form-step').forEach(el => el.classList.remove('active'));
             document.getElementById(`step-${step}`).classList.add('active');
+            updateStepIndicator(step);
         }
 
         function toggleDate(element, dateStr) {
@@ -1385,6 +1683,7 @@
 
                 setTimeout(() => {
                     document.getElementById('step-3').innerHTML = '<h2 style="color:var(--primary)">Joueur Enregistré ! ✅</h2><p style="text-align:center">Rendez-vous sur le terrain ci-dessous.</p>';
+                    launchConfetti();
                     loadPlayers();
                 }, 1500);
 
@@ -1654,7 +1953,7 @@
                 radarChartInstance.update();
             }
 
-            document.getElementById('radar-gen').innerText = `GEN: ${score}`;
+            animateGenScore(score);
 
             const rect = element.getBoundingClientRect();
             let leftPos = rect.right + 15;
@@ -1666,6 +1965,33 @@
             tooltip.style.left = `${leftPos}px`;
             tooltip.style.top = `${rect.top - 50}px`;
             tooltip.classList.add('show');
+        }
+
+        // Fait défiler le score GEN de 0 (ou de sa valeur précédente) jusqu'au score réel,
+        // plutôt que de l'afficher d'un coup.
+        let genAnimFrame = null;
+        function animateGenScore(target) {
+            const el = document.getElementById('radar-gen');
+            if (prefersReducedMotion) {
+                el.innerText = `GEN: ${target}`;
+                return;
+            }
+            if (genAnimFrame) cancelAnimationFrame(genAnimFrame);
+            const duration = 450;
+            const start = performance.now();
+            const from = 0;
+            function step(now) {
+                const progress = Math.min((now - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+                const value = Math.round(from + (target - from) * eased);
+                el.innerText = `GEN: ${value}`;
+                if (progress < 1) {
+                    genAnimFrame = requestAnimationFrame(step);
+                } else {
+                    genAnimFrame = null;
+                }
+            }
+            genAnimFrame = requestAnimationFrame(step);
         }
 
         function hideRadar() {
@@ -1755,6 +2081,170 @@
             });
         }
 
+        // --- Confetti à la validation de l'inscription ---
+        function launchConfetti() {
+            if (prefersReducedMotion) return;
+
+            const canvas = document.createElement('canvas');
+            canvas.style.position = 'fixed';
+            canvas.style.inset = '0';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.pointerEvents = 'none';
+            canvas.style.zIndex = '3000';
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            document.body.appendChild(canvas);
+            const ctx = canvas.getContext('2d');
+
+            const colors = ['#00ff88', '#00f3ff', '#ff00ea', '#ffffff'];
+            const originX = window.innerWidth / 2;
+            const originY = window.innerHeight * 0.35;
+
+            const particles = Array.from({ length: 140 }, () => {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 4 + Math.random() * 9;
+                return {
+                    x: originX,
+                    y: originY,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed - 4,
+                    size: 5 + Math.random() * 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * Math.PI,
+                    rotationSpeed: (Math.random() - 0.5) * 0.3,
+                    shape: Math.random() > 0.5 ? 'rect' : 'circle'
+                };
+            });
+
+            const gravity = 0.18;
+            const drag = 0.985;
+            let frame = 0;
+            const maxFrames = 130;
+
+            function tick() {
+                frame++;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.vx *= drag;
+                    p.vy = p.vy * drag + gravity;
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.rotation += p.rotationSpeed;
+
+                    const fade = Math.max(0, 1 - frame / maxFrames);
+                    ctx.save();
+                    ctx.globalAlpha = fade;
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation);
+                    ctx.fillStyle = p.color;
+                    if (p.shape === 'rect') {
+                        ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);
+                    } else {
+                        ctx.beginPath();
+                        ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    ctx.restore();
+                });
+
+                if (frame < maxFrames) {
+                    requestAnimationFrame(tick);
+                } else {
+                    canvas.remove();
+                }
+            }
+            requestAnimationFrame(tick);
+        }
+
+        // --- Historique & classement (données issues du fichier Excel des matchs) ---
+        // ⚠️ Snapshot statique au moment où ce fichier a été généré. Pour que ça se mette à jour
+        // automatiquement à chaque nouveau match, il faudrait ajouter un onglet équivalent dans
+        // le Google Sheet et un nouvel endpoint dans le script Apps Script (dis-le-moi si tu veux ça).
+        const PLAYER_STATS = [
+            { prenom: 'Adavan', joue: 6, victoires: 4 },
+            { prenom: 'Florian', joue: 6, victoires: 3 },
+            { prenom: 'Seb', joue: 5, victoires: 4 },
+            { prenom: 'Yoann', joue: 6, victoires: 3 },
+            { prenom: 'Tristan', joue: 4, victoires: 2 },
+            { prenom: 'Alex', joue: 6, victoires: 4 },
+            { prenom: 'Christophe', joue: 5, victoires: 2 },
+            { prenom: 'Gaelle', joue: 4, victoires: 2 },
+            { prenom: 'Léo', joue: 3, victoires: 1 },
+            { prenom: 'Latifa', joue: 4, victoires: 1 },
+            { prenom: 'Jean Edouard', joue: 5, victoires: 1 },
+            { prenom: 'Fred', joue: 2, victoires: 0 },
+            { prenom: 'Maximilien', joue: 2, victoires: 2 },
+            { prenom: 'Daniel', joue: 1, victoires: 0 },
+            { prenom: 'Ahmed', joue: 1, victoires: 0 },
+            { prenom: 'Leila', joue: 1, victoires: 1 },
+            { prenom: 'Léandre', joue: 1, victoires: 1 }
+        ];
+
+        const MATCH_HISTORY = [
+            { id: 1, team1: ['Alex', 'Christophe', 'Jean Edouard', 'Léo', 'Yoann'], team2: ['Adavan', 'Florian', 'Seb', 'Tristan'], score1: null, score2: null },
+            { id: 2, team1: ['Alex', 'Christophe', 'Gaelle', 'Léo', 'Sebastien', 'Tristan'], team2: ['Latifa', 'Jean Edouard', 'Florian', 'Fred', 'Yoann', 'Adavan'], score1: 14, score2: 10 },
+            { id: 3, team1: ['Alex', 'Latifa', 'Seb', 'Adavan', 'Yoann'], team2: ['Christophe', 'Florian', 'Gaelle', 'Tristan', 'Jean Edouard'], score1: 13, score2: 12 },
+            { id: 4, team1: ['Jean Edouard', 'Alex', 'Florian', 'Gaelle', 'Maximilien'], team2: ['Christophe', 'Sébastien', 'Adavan', 'Yoann', 'Tristan'], score1: 10, score2: 6 },
+            { id: 5, team1: ['Latifa', 'Daniel', 'Alex', 'Gaelle', 'Ahmed', 'Fred'], team2: ['Florian', 'Sébastien', 'Adavan', 'Léo', 'Leila', 'Yoann'], score1: 8, score2: 14 },
+            { id: 6, team1: ['Christophe', 'Alex', 'Yoann', 'Maximilien', 'Adavan'], team2: ['Florian', 'Jean Edouard', 'Latifa', 'Léandre'], score1: 24, score2: 23 }
+        ];
+
+        function renderLeaderboard() {
+            const list = document.getElementById('leaderboard-list');
+            if (!list) return;
+
+            const ranked = PLAYER_STATS
+                .map(p => ({ ...p, ratio: p.joue > 0 ? p.victoires / p.joue : 0 }))
+                .sort((a, b) => b.ratio - a.ratio || b.victoires - a.victoires);
+
+            list.innerHTML = ranked.map((p, i) => `
+                <div class="leaderboard-row">
+                    <div class="lb-rank">${i + 1}</div>
+                    <img class="lb-avatar" src="${getAvatarPath(p.prenom)}" alt="${p.prenom}" onerror="this.onerror=null;this.src='avatar.jpg';">
+                    <div class="lb-info">
+                        <div class="lb-name">${p.prenom}</div>
+                        <div class="lb-meta">${p.victoires} victoires / ${p.joue} matchs</div>
+                        <div class="lb-bar-track"><div class="lb-bar-fill" style="width:${Math.round(p.ratio * 100)}%"></div></div>
+                    </div>
+                    <div class="lb-ratio">${Math.round(p.ratio * 100)}%</div>
+                </div>
+            `).join('');
+        }
+
+        function renderMatchHistory() {
+            const list = document.getElementById('matches-list');
+            if (!list) return;
+
+            const chip = (name) => `
+                <span class="match-player-chip">
+                    <img src="${getAvatarPath(name)}" alt="${name}" onerror="this.onerror=null;this.src='avatar.jpg';">
+                    ${name}
+                </span>
+            `;
+
+            list.innerHTML = MATCH_HISTORY.slice().reverse().map(m => {
+                const hasScore = m.score1 !== null && m.score2 !== null;
+                const team1Wins = hasScore && m.score1 > m.score2;
+                const team2Wins = hasScore && m.score2 > m.score1;
+                const scoreText = hasScore ? `${m.score1} — ${m.score2}` : 'Score non renseigné';
+
+                return `
+                    <div class="match-card">
+                        <div class="match-card-header">
+                            <span class="match-tag">Match ${m.id}</span>
+                            <span class="match-score">${scoreText}</span>
+                        </div>
+                        <div class="match-teams">
+                            <div class="match-team-list ${team1Wins ? 'team-win' : ''}">${m.team1.map(chip).join('')}</div>
+                            <div class="match-vs">VS</div>
+                            <div class="match-team-list right ${team2Wins ? 'team-win' : ''}">${m.team2.map(chip).join('')}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
         // --- Lancement initial ---
         initRadarChart();
         initScrollProgress();
@@ -1763,6 +2253,8 @@
         initCursorGlow();
         initReveal();
         initRipple();
+        renderLeaderboard();
+        renderMatchHistory();
         loadPlayers();
     </script>
 </body>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GS27 Football Club</title>
+    <title>La ligue des Shampoing céramique</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -506,6 +506,96 @@
         input[type="text"]:focus {
             border-color: var(--primary);
             box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        /* --- Menu déroulant custom pour le choix du prénom --- */
+        .custom-select {
+            position: relative;
+            margin: 20px 0;
+        }
+        .custom-select-trigger {
+            width: 100%;
+            padding: 15px 18px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .custom-select-trigger.placeholder { color: rgba(255,255,255,0.4); font-weight: 500; }
+        .custom-select.open .custom-select-trigger,
+        .custom-select-trigger:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+        .chevron-icon {
+            width: 20px;
+            height: 20px;
+            stroke: var(--primary);
+            flex-shrink: 0;
+            transition: transform 0.3s var(--ease-out);
+        }
+        .custom-select.open .chevron-icon {
+            transform: rotate(180deg);
+        }
+        .custom-select-panel {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: rgba(10,10,12,0.97);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0,255,136,0.25);
+            border-radius: 12px;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.7);
+            max-height: 280px;
+            overflow-y: auto;
+            z-index: 40;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: opacity 0.22s var(--ease-out), transform 0.22s var(--ease-out), visibility 0.22s;
+            padding: 6px;
+        }
+        .custom-select.open .custom-select-panel {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .custom-select-option {
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s ease, color 0.15s ease, padding-left 0.15s ease;
+        }
+        .custom-select-option:hover {
+            background: rgba(0,255,136,0.12);
+            color: var(--primary);
+            padding-left: 20px;
+        }
+        .custom-select-option.selected {
+            color: var(--primary);
+            background: rgba(0,255,136,0.08);
+        }
+        .custom-select-option.other {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 6px;
+            padding-top: 14px;
+            color: rgba(255,255,255,0.55);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        .prenom-other-input {
+            display: none;
         }
 
         button {
@@ -1342,7 +1432,7 @@
         <div class="glow-orb b"></div>
         <div class="hero-content">
             <span class="hero-eyebrow">Session du jeudi</span>
-            <h1>La ligue des shampoing céramique</h1>
+            <h1>La ligue des Shampoing céramique</h1>
             <p>Remplis tes stats, gagne ta place sur le terrain.</p>
         </div>
         <div class="scroll-cue" onclick="document.getElementById('inscription').scrollIntoView({behavior:'smooth'})">
@@ -1365,7 +1455,18 @@
             <!-- Etape 1 -->
             <div id="step-1" class="form-step active">
                 <h2>Identité & Poste</h2>
-                <input type="text" id="prenom" placeholder="Ton Prénom / Pseudo" autocomplete="off">
+
+                <input type="hidden" id="prenom" value="">
+
+                <div class="custom-select" id="prenom-select">
+                    <button type="button" class="custom-select-trigger placeholder" id="prenom-trigger">
+                        <span id="prenom-trigger-text">Choisis ton prénom</span>
+                        <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="custom-select-panel" id="prenom-panel"></div>
+                </div>
+
+                <input type="text" id="prenom-other-input" class="prenom-other-input" placeholder="Écris ton prénom" autocomplete="off">
 
                 <h3 style="margin-top: 20px; text-align: center; font-size: 1.2rem; color: #ccc;">Poste de prédilection</h3>
                 <div class="date-cards" id="poste-selection">
@@ -1451,7 +1552,7 @@
 
         <section id="compo" class="section-pitch">
             <div class="pitch-header reveal">
-                <h2>Composition TV</h2>
+                <h2>Composition des équipes</h2>
                 <button onclick="loadPlayers()" class="refresh-btn">Mettre à jour</button>
             </div>
 
@@ -1511,7 +1612,7 @@
                 </div>
 
                 <div class="subs-sidebar reveal">
-                    <h3>Le Banc</h3>
+                    <h3>Le Banc des Remplaçants</h3>
                     <div id="subs-list"></div>
                 </div>
             </div>
@@ -1582,6 +1683,77 @@
         }
 
         // --- Navigation Formulaire ---
+        // --- Suggestions de prénoms (chips + datalist), à partir des joueurs déjà connus ---
+        // Liste des personnes susceptibles de s'inscrire (roster actuel de l'entreprise,
+        // volontairement distincte de PLAYER_STATS qui contient aussi d'anciens collègues).
+        // 👉 Pour ajouter/retirer quelqu'un, modifie simplement ce tableau.
+        const KNOWN_PLAYERS = [
+            'Adavan', 'Maxime', 'Romain', 'Florian', 'Tristan', 'Marie', 'Leila',
+            'Christophe LG', 'Christophe D', 'Clément', 'Daniel', 'Gaelle', 'Audrey'
+        ];
+
+        function initPrenomSelect() {
+            const hiddenInput = document.getElementById('prenom');
+            const wrapper = document.getElementById('prenom-select');
+            const trigger = document.getElementById('prenom-trigger');
+            const triggerText = document.getElementById('prenom-trigger-text');
+            const panel = document.getElementById('prenom-panel');
+            const otherInput = document.getElementById('prenom-other-input');
+            if (!wrapper || !trigger || !panel) return;
+
+            const names = [...KNOWN_PLAYERS].sort((a, b) => a.localeCompare(b, 'fr'));
+
+            panel.innerHTML = names.map(n => `<div class="custom-select-option" data-value="${n}">${n}</div>`).join('')
+                + `<div class="custom-select-option other" data-value="__other__">✏️ Mon prénom n'est pas dans la liste</div>`;
+
+            function closePanel() {
+                wrapper.classList.remove('open');
+            }
+            function openPanel() {
+                wrapper.classList.add('open');
+            }
+
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                wrapper.classList.contains('open') ? closePanel() : openPanel();
+            });
+
+            panel.querySelectorAll('.custom-select-option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    const value = opt.dataset.value;
+
+                    panel.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('selected'));
+
+                    if (value === '__other__') {
+                        hiddenInput.value = '';
+                        triggerText.textContent = 'Choisis ton prénom';
+                        trigger.classList.add('placeholder');
+                        otherInput.style.display = 'block';
+                        closePanel();
+                        otherInput.focus();
+                        return;
+                    }
+
+                    opt.classList.add('selected');
+                    hiddenInput.value = value;
+                    triggerText.textContent = value;
+                    trigger.classList.remove('placeholder');
+                    otherInput.style.display = 'none';
+                    otherInput.value = '';
+                    closePanel();
+                });
+            });
+
+            otherInput.addEventListener('input', () => {
+                hiddenInput.value = otherInput.value.trim();
+            });
+
+            // Ferme le menu si on clique ailleurs sur la page
+            document.addEventListener('click', (e) => {
+                if (!wrapper.contains(e.target)) closePanel();
+            });
+        }
+
         function selectPoste(element, poste) {
             document.querySelectorAll('#poste-selection .date-card').forEach(el => el.classList.remove('selected'));
             element.classList.add('selected');
@@ -2157,14 +2329,33 @@
             requestAnimationFrame(tick);
         }
 
-        // --- Historique & classement (données issues du fichier Excel des matchs) ---
-        // ⚠️ Snapshot statique au moment où ce fichier a été généré. Pour que ça se mette à jour
-        // automatiquement à chaque nouveau match, il faudrait ajouter un onglet équivalent dans
-        // le Google Sheet et un nouvel endpoint dans le script Apps Script (dis-le-moi si tu veux ça).
+        // ============================================================
+        // === HISTORIQUE & CLASSEMENT — À METTRE À JOUR APRÈS CHAQUE MATCH ===
+        // ============================================================
+        // Ces données sont statiques (figées dans ce fichier), PAS connectées au Google Sheet.
+        // Pour ajouter un match, modifie directement les deux tableaux ci-dessous, sauvegarde
+        // le fichier et réenvoie-le sur ton hébergement. Il n'y a rien d'autre à faire.
+        //
+        // 1) PLAYER_STATS : une ligne par joueur, avec son nombre total de matchs joués (joue)
+        //    et de victoires (victoires) cumulés depuis le début. Le ratio et le classement sont
+        //    recalculés automatiquement, tu n'as jamais à les toucher.
+        //    -> Après un match, incrémente "joue" de 1 pour CHAQUE joueur qui a joué, et
+        //       "victoires" de 1 pour ceux de l'équipe gagnante.
+        //    -> Nouveau joueur qui n'a jamais joué avant : ajoute une nouvelle ligne
+        //       { prenom: 'Prénom', joue: 1, victoires: 0 } (ou 1 s'il a gagné).
+        //
+        // 2) MATCH_HISTORY : une entrée par match, avec les deux compos et le score.
+        //    -> Copie le dernier bloc { id: ..., team1: [...], team2: [...], score1: X, score2: Y },
+        //       colle-le juste avant le "];" de fermeture, augmente le numéro "id" de 1,
+        //       remplis les compos et le score. Si le score n'est pas encore connu, mets "null".
+        //
+        // ⚠️ Important : utilise TOUJOURS le même prénom pour la même personne dans les deux
+        // tableaux (ex: "Sébastien" partout, jamais "Seb" ou "Sebastien" à côté) — sinon le site
+        // le traite comme deux joueurs différents et le classement/l'historique se trompent.
         const PLAYER_STATS = [
             { prenom: 'Adavan', joue: 6, victoires: 4 },
             { prenom: 'Florian', joue: 6, victoires: 3 },
-            { prenom: 'Seb', joue: 5, victoires: 4 },
+            { prenom: 'Sébastien', joue: 5, victoires: 4 },
             { prenom: 'Yoann', joue: 6, victoires: 3 },
             { prenom: 'Tristan', joue: 4, victoires: 2 },
             { prenom: 'Alex', joue: 6, victoires: 4 },
@@ -2179,15 +2370,17 @@
             { prenom: 'Ahmed', joue: 1, victoires: 0 },
             { prenom: 'Leila', joue: 1, victoires: 1 },
             { prenom: 'Léandre', joue: 1, victoires: 1 }
+            // 👉 Ajoute tes nouvelles lignes ici, une par joueur.
         ];
 
         const MATCH_HISTORY = [
-            { id: 1, team1: ['Alex', 'Christophe', 'Jean Edouard', 'Léo', 'Yoann'], team2: ['Adavan', 'Florian', 'Seb', 'Tristan'], score1: null, score2: null },
-            { id: 2, team1: ['Alex', 'Christophe', 'Gaelle', 'Léo', 'Sebastien', 'Tristan'], team2: ['Latifa', 'Jean Edouard', 'Florian', 'Fred', 'Yoann', 'Adavan'], score1: 14, score2: 10 },
-            { id: 3, team1: ['Alex', 'Latifa', 'Seb', 'Adavan', 'Yoann'], team2: ['Christophe', 'Florian', 'Gaelle', 'Tristan', 'Jean Edouard'], score1: 13, score2: 12 },
+            { id: 1, team1: ['Alex', 'Christophe', 'Jean Edouard', 'Léo', 'Yoann'], team2: ['Adavan', 'Florian', 'Sébastien', 'Tristan'], score1: null, score2: null },
+            { id: 2, team1: ['Alex', 'Christophe', 'Gaelle', 'Léo', 'Sébastien', 'Tristan'], team2: ['Latifa', 'Jean Edouard', 'Florian', 'Fred', 'Yoann', 'Adavan'], score1: 14, score2: 10 },
+            { id: 3, team1: ['Alex', 'Latifa', 'Sébastien', 'Adavan', 'Yoann'], team2: ['Christophe', 'Florian', 'Gaelle', 'Tristan', 'Jean Edouard'], score1: 13, score2: 12 },
             { id: 4, team1: ['Jean Edouard', 'Alex', 'Florian', 'Gaelle', 'Maximilien'], team2: ['Christophe', 'Sébastien', 'Adavan', 'Yoann', 'Tristan'], score1: 10, score2: 6 },
             { id: 5, team1: ['Latifa', 'Daniel', 'Alex', 'Gaelle', 'Ahmed', 'Fred'], team2: ['Florian', 'Sébastien', 'Adavan', 'Léo', 'Leila', 'Yoann'], score1: 8, score2: 14 },
             { id: 6, team1: ['Christophe', 'Alex', 'Yoann', 'Maximilien', 'Adavan'], team2: ['Florian', 'Jean Edouard', 'Latifa', 'Léandre'], score1: 24, score2: 23 }
+            // 👉 Ajoute ton nouveau match ici, juste avant le crochet fermant.
         ];
 
         function renderLeaderboard() {
@@ -2255,6 +2448,7 @@
         initRipple();
         renderLeaderboard();
         renderMatchHistory();
+        initPrenomSelect();
         loadPlayers();
     </script>
 </body>

@@ -1580,11 +1580,11 @@
             <div id="step-2" class="form-step">
                 <h2>Disponibilité</h2>
                 <p style="text-align:center; color:#aaa; margin-bottom: 15px;">Tu peux sélectionner plusieurs dates.</p>
-                <div class="date-cards">
-                    <div class="date-card" onclick="toggleDate(this, 'Jeudi 3 Sept')">Jeudi 3 Sept</div>
-                    <div class="date-card" onclick="toggleDate(this, 'Jeudi 10 Sept')">Jeudi 17 Sept</div>
-                    <div class="date-card" onclick="toggleDate(this, 'Jeudi 17 Sept')">Jeudi 24 Sept</div>
-                    <div class="date-card" onclick="toggleDate(this, 'Jeudi 24 Sept')">Jeudi 01 Oct</div>
+                <div class="date-cards" id="date-cards">
+                    <div class="date-card" data-date="Jeudi 3 Sept" onclick="toggleDate(this)">Jeudi 3 Sept</div>
+                    <div class="date-card" data-date="Jeudi 17 Sept" onclick="toggleDate(this)">Jeudi 17 Sept</div>
+                    <div class="date-card" data-date="Jeudi 24 Sept" onclick="toggleDate(this)">Jeudi 24 Sept</div>
+                    <div class="date-card" data-date="Jeudi 01 Oct" onclick="toggleDate(this)">Jeudi 01 Oct</div>
                 </div>
                 <div style="display:flex; gap:10px;">
                     <button style="background: #444; color:#fff;" onclick="prevStep(1)">Retour</button>
@@ -1908,7 +1908,8 @@
             updateStepIndicator(step);
         }
 
-        function toggleDate(element, dateStr) {
+        function toggleDate(element) {
+            const dateStr = element.dataset.date;
             element.classList.toggle('selected');
             if (formData.dates.includes(dateStr)) {
                 formData.dates = formData.dates.filter(d => d !== dateStr);
@@ -1972,11 +1973,17 @@
         }
 
         // --- Sondage de disponibilité : détermine la date où le five a lieu ---
-        // Les libellés doivent être identiques à ceux des date-cards de l'étape 2 du formulaire.
-        const DATE_OPTIONS = ['Jeudi 3 Sept', 'Jeudi 10 Sept', 'Jeudi 17 Sept', 'Jeudi 24 Sept'];
+        // Les dates possibles sont lues directement depuis les cartes de l'étape 2 du formulaire
+        // (attribut data-date) — donc si tu modifies les dates dans le HTML, le sondage suit
+        // automatiquement, aucune autre modification nécessaire.
         const MIN_PLAYERS_FOR_FIVE = 8;
 
+        function getDateOptions() {
+            return Array.from(document.querySelectorAll('#date-cards .date-card')).map(el => el.dataset.date);
+        }
+
         function renderDatePoll(players) {
+            const DATE_OPTIONS = getDateOptions();
             const counts = {};
             DATE_OPTIONS.forEach(d => { counts[d] = 0; });
 

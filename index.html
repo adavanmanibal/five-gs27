@@ -107,18 +107,24 @@
             border-bottom-color: rgba(0, 255, 136, 0.15);
         }
         .logo-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            position: relative;
+            align-self: stretch;
+            width: 150px;
+            overflow: visible;
         }
         .nav-logo-icon {
-            height: 92px;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            transform: translateY(50%);
+            height: 160px;
             width: auto;
             display: block;
+            filter: drop-shadow(0 10px 18px rgba(0,0,0,0.6));
             transition: height 0.35s var(--ease-out);
         }
         .navbar.scrolled .nav-logo-icon {
-            height: 60px;
+            height: 110px;
         }
         .navbar .logo {
             font-family: 'Space Grotesk', sans-serif;
@@ -1498,8 +1504,9 @@
             .navbar { padding: 16px 20px; }
             .navbar.scrolled { padding: 10px 20px; }
             .navbar ul { gap: 16px; }
-            .nav-logo-icon { height: 58px; }
-            .navbar.scrolled .nav-logo-icon { height: 42px; }
+            .logo-group { width: 90px; }
+            .nav-logo-icon { height: 100px; }
+            .navbar.scrolled .nav-logo-icon { height: 72px; }
             #cursor-glow { display: none; }
         }
 

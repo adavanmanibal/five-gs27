@@ -696,6 +696,104 @@
             margin: 50px auto 100px;
             padding: 0 20px;
         }
+
+        /* --- Sondage de disponibilité --- */
+        .date-poll {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 24px 26px;
+            margin-bottom: 24px;
+        }
+        .date-poll-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 18px;
+        }
+        .date-poll-header h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+        }
+        .date-poll-rule {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.4);
+        }
+        .date-poll-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .date-poll-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .date-poll-label {
+            width: 110px;
+            flex-shrink: 0;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .date-poll-track {
+            flex: 1;
+            height: 20px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        .date-poll-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--team-a), var(--primary));
+            transition: width 0.6s var(--ease-out);
+        }
+        .date-poll-row.winner .date-poll-fill {
+            background: linear-gradient(90deg, var(--primary), #00cc6a);
+            box-shadow: 0 0 12px rgba(0,255,136,0.5);
+        }
+        .date-poll-threshold {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(255,255,255,0.5);
+        }
+        .date-poll-count {
+            width: 70px;
+            flex-shrink: 0;
+            text-align: right;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+        .date-poll-row.winner .date-poll-label,
+        .date-poll-row.winner .date-poll-count {
+            color: var(--primary);
+        }
+        .date-poll-status {
+            margin-top: 20px;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        .date-poll-status.confirmed {
+            background: rgba(0,255,136,0.1);
+            border: 1px solid rgba(0,255,136,0.35);
+            color: var(--primary);
+        }
+        .date-poll-status.pending {
+            background: rgba(255,180,0,0.08);
+            border: 1px solid rgba(255,180,0,0.3);
+            color: #ffc94d;
+        }
         .pitch-header {
             display: flex;
             justify-content: space-between;
@@ -1551,6 +1649,15 @@
         </section>
 
         <section id="compo" class="section-pitch">
+            <div class="date-poll reveal" id="date-poll">
+                <div class="date-poll-header">
+                    <h3>📅 Sondage des disponibilités</h3>
+                    <span class="date-poll-rule">Il faut au moins 8 joueurs dispo à la même date pour que le five soit maintenu</span>
+                </div>
+                <div class="date-poll-bars" id="date-poll-bars"></div>
+                <div class="date-poll-status" id="date-poll-status"></div>
+            </div>
+
             <div class="pitch-header reveal">
                 <h2>Composition des équipes</h2>
                 <button onclick="loadPlayers()" class="refresh-btn">Mettre à jour</button>
@@ -1864,6 +1971,75 @@
             }
         }
 
+        // --- Sondage de disponibilité : détermine la date où le five a lieu ---
+        // Les libellés doivent être identiques à ceux des date-cards de l'étape 2 du formulaire.
+        const DATE_OPTIONS = ['Jeudi 3 Sept', 'Jeudi 10 Sept', 'Jeudi 17 Sept', 'Jeudi 24 Sept'];
+        const MIN_PLAYERS_FOR_FIVE = 8;
+
+        function renderDatePoll(players) {
+            const counts = {};
+            DATE_OPTIONS.forEach(d => { counts[d] = 0; });
+
+            players.forEach(p => {
+                (p.date || '').split('&').map(d => d.trim()).filter(Boolean).forEach(d => {
+                    if (Object.prototype.hasOwnProperty.call(counts, d)) counts[d]++;
+                });
+            });
+
+            const maxCount = Math.max(0, ...Object.values(counts));
+            const barsMax = Math.max(MIN_PLAYERS_FOR_FIVE, maxCount, 1);
+            const winningDate = maxCount > 0 ? DATE_OPTIONS.find(d => counts[d] === maxCount) : null;
+            const confirmed = !!winningDate && counts[winningDate] >= MIN_PLAYERS_FOR_FIVE;
+
+            const barsEl = document.getElementById('date-poll-bars');
+            const statusEl = document.getElementById('date-poll-status');
+            if (!barsEl || !statusEl) return { winningDate: null, confirmed: false };
+
+            const thresholdPct = Math.min(100, Math.round((MIN_PLAYERS_FOR_FIVE / barsMax) * 100));
+
+            barsEl.innerHTML = DATE_OPTIONS.map(d => {
+                const c = counts[d];
+                const isWinner = confirmed && d === winningDate;
+                const widthPct = Math.min(100, Math.round((c / barsMax) * 100));
+                return `
+                    <div class="date-poll-row ${isWinner ? 'winner' : ''}">
+                        <span class="date-poll-label">${d}</span>
+                        <div class="date-poll-track">
+                            <div class="date-poll-fill" style="width:${widthPct}%"></div>
+                            <div class="date-poll-threshold" style="left:${thresholdPct}%" title="Seuil minimum (${MIN_PLAYERS_FOR_FIVE})"></div>
+                        </div>
+                        <span class="date-poll-count">${c} dispo${c > 1 ? 's' : ''}</span>
+                    </div>
+                `;
+            }).join('');
+
+            if (confirmed) {
+                statusEl.className = 'date-poll-status confirmed';
+                statusEl.innerHTML = `✅ Five confirmé le <strong>${winningDate}</strong> — ${counts[winningDate]} joueurs disponibles !`;
+            } else if (maxCount > 0) {
+                statusEl.className = 'date-poll-status pending';
+                statusEl.innerHTML = `⏳ Pas encore assez de monde pour fixer une date (minimum ${MIN_PLAYERS_FOR_FIVE} sur une même date). Pour l'instant, le mieux placé est <strong>${winningDate}</strong> avec ${counts[winningDate]} dispo${counts[winningDate] > 1 ? 's' : ''}.`;
+            } else {
+                statusEl.className = 'date-poll-status pending';
+                statusEl.innerHTML = `⏳ Personne n'a encore indiqué de disponibilité.`;
+            }
+
+            return { winningDate, winningCount: maxCount, confirmed };
+        }
+
+        function clearPitch() {
+            const teamA = document.getElementById('team-a');
+            const teamB = document.getElementById('team-b');
+            const subs = document.getElementById('subs-list');
+            const formationA = document.getElementById('formation-a');
+            const formationB = document.getElementById('formation-b');
+            if (teamA) teamA.innerHTML = '';
+            if (teamB) teamB.innerHTML = '';
+            if (subs) subs.innerHTML = '';
+            if (formationA) formationA.textContent = '–';
+            if (formationB) formationB.textContent = '–';
+        }
+
         // --- Affichage de l'équipe ---
         // retryCount : nombre de tentatives déjà effectuées (usage interne, ne pas fournir à l'appel)
         async function loadPlayers(retryCount = 0) {
@@ -1896,8 +2072,22 @@
                 if (players.length === 0) {
                     emptyMsg.style.display = 'block';
                     emptyMsg.innerText = "Le terrain est vide. Soyez les premiers à vous inscrire !";
+                    renderDatePoll(players);
+                    clearPitch();
                 } else {
-                     buildTeams(players);
+                    const poll = renderDatePoll(players);
+
+                    if (poll.confirmed) {
+                        emptyMsg.style.display = 'none';
+                        const eligible = players.filter(p =>
+                            (p.date || '').split('&').map(d => d.trim()).includes(poll.winningDate)
+                        );
+                        buildTeams(eligible);
+                    } else {
+                        emptyMsg.style.display = 'block';
+                        emptyMsg.innerText = `Le five n'est pas encore confirmé cette semaine — il faut au moins ${MIN_PLAYERS_FOR_FIVE} joueurs disponibles à la même date. Reviens un peu plus tard, ou motive tes collègues à s'inscrire ! 👀`;
+                        clearPitch();
+                    }
                 }
 
             } catch (error) {

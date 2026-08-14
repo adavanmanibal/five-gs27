@@ -2356,7 +2356,11 @@
 
             if(radarChartInstance) {
                 radarChartInstance.data.datasets[0].data = [vit, tec, vis, phy];
-                radarChartInstance.update();
+                // 'none' force un rendu immédiat et complet, sans transition animée entre l'ancien
+                // et le nouveau joueur survolé — évite qu'un survol rapide entre plusieurs cartes
+                // ne capture le graphique en plein milieu d'une animation, avec un axe pas encore
+                // à sa vraie position.
+                radarChartInstance.update('none');
             }
 
             const breakdown = document.getElementById('radar-breakdown');

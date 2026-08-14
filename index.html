@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La ligue des Shampoings céramiques</title>
+    <title>La ligue des Shampoing céramique</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1248,6 +1248,20 @@
             color: var(--primary);
             text-shadow: 0 0 10px var(--primary);
         }
+        .radar-breakdown {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px 12px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+        }
+        .radar-breakdown span b {
+            color: #fff;
+            font-weight: 700;
+        }
 
         /* Remplaçants */
         .subs-sidebar {
@@ -1556,7 +1570,7 @@
         <div class="glow-orb b"></div>
         <div class="hero-content">
             <span class="hero-eyebrow">Session du jeudi</span>
-            <h1>La ligue des Shampoings céramiques</h1>
+            <h1>La ligue des Shampoing céramique</h1>
             <p>Remplis tes stats, gagne ta place sur le terrain.</p>
         </div>
         <div class="scroll-cue" onclick="document.getElementById('inscription').scrollIntoView({behavior:'smooth'})">
@@ -1768,6 +1782,7 @@
         <div id="radar-tooltip">
             <canvas id="radarChart"></canvas>
             <div class="radar-score" id="radar-gen">GEN: 0</div>
+            <div class="radar-breakdown" id="radar-breakdown"></div>
         </div>
     </main>
 
@@ -2342,6 +2357,16 @@
             if(radarChartInstance) {
                 radarChartInstance.data.datasets[0].data = [vit, tec, vis, phy];
                 radarChartInstance.update();
+            }
+
+            const breakdown = document.getElementById('radar-breakdown');
+            if (breakdown) {
+                breakdown.innerHTML = `
+                    <span>Vitesse ⚡ <b>${vit}</b></span>
+                    <span>Technique ⚽ <b>${tec}</b></span>
+                    <span>Vision 👀 <b>${vis}</b></span>
+                    <span>Endurance 🫀 <b>${phy}</b></span>
+                `;
             }
 
             animateGenScore(score);
